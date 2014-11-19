@@ -17,16 +17,27 @@ public class CreateTable
                     "PRICE numeric(10,2) NOT NULL,SALES integer NOT NULL, TOTAL integer NOT NULL, PRIMARY KEY (COF_NAME)," +
                     "FOREIGN KEY (SUP_ID) REFERENCES SUPPLIERS (SUP_ID))";
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException
+    public static void main(String[] args)
     {
         PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
         DriverManager.setLogWriter(pw);
         CreateTable table = new CreateTable();
-        table.createConnection();
-        table.execute(SUPPLIERS_SQL);
-        table.execute(COFFEE_SQL);
-        table.close();
-        pw.close();
+        try {
+            table.createConnection();
+            table.execute(SUPPLIERS_SQL);
+            table.execute(COFFEE_SQL);
+            table.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                table.close();
+            } catch (SQLException e) {
+                //ignore
+            }
+            pw.close();
+        }
+
 
     }
 
@@ -35,14 +46,28 @@ public class CreateTable
         connection.close();
     }
 
-    private void execute(String sql) throws SQLException
+    private void execute(String sql)
     {
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        stmt.execute();
-        stmt.close();
+        Statement stmt = null;
+        try {
+            stmt = connection.createStatement();
+            stmt.executeUpdate(sql);
+            stmt.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    //ignore
+                }
+            }
+        }
+
     }
 
-    public void createConnection() throws SQLException, ClassNotFoundException
+    public void createConnection() throws SQLException
     {
         connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbctutorials", "root", "root");
     }
