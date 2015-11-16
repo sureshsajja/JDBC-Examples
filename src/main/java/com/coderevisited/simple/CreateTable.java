@@ -31,8 +31,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.sql.*;
 
-public class CreateTable
-{
+public class CreateTable {
     private Connection connection;
     private static final String SUPPLIERS_SQL =
             "CREATE TABLE IF NOT EXISTS SUPPLIERS (SUP_ID INTEGER NOT NULL,SUP_NAME VARCHAR(40) NOT NULL, " +
@@ -42,8 +41,7 @@ public class CreateTable
                     "PRICE numeric(10,2) NOT NULL,SALES integer NOT NULL, TOTAL integer NOT NULL, PRIMARY KEY (COF_NAME)," +
                     "FOREIGN KEY (SUP_ID) REFERENCES SUPPLIERS (SUP_ID))";
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
         DriverManager.setLogWriter(pw);
         CreateTable table = new CreateTable();
@@ -66,13 +64,12 @@ public class CreateTable
 
     }
 
-    private void close() throws SQLException
-    {
-        connection.close();
+    private void close() throws SQLException {
+        if (connection != null)
+            connection.close();
     }
 
-    private void execute(String sql)
-    {
+    private void execute(String sql) {
         Statement stmt = null;
         try {
             stmt = connection.createStatement();
@@ -92,8 +89,7 @@ public class CreateTable
 
     }
 
-    public void createConnection() throws SQLException
-    {
+    public void createConnection() throws SQLException {
         connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbctutorials", "root", "root");
     }
 }

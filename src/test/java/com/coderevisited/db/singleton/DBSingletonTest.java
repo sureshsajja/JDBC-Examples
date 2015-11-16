@@ -48,7 +48,9 @@ public class DBSingletonTest {
 
 
         try {
-            DBSingleton.getInstance().close();
+            DBSingleton singleton = DBSingleton.getInstance();
+            if (singleton != null)
+                singleton.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
